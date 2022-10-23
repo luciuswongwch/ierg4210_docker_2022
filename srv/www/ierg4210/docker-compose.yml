@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+    web:
+        container_name: ierg4210_apache
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        restart: always
+        depends_on:
+            - db
+        volumes:
+            - ./code/:/var/www/html/
+            - ./apache_log:/var/log/apache2
+    db:
+        container_name: ierg4210_db
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ${IERG4210_MYSQL_PASSWORD}
+            MYSQL_DATABASE: ${IERG4210_MYSQL_DBNAME}
+    phpmyadmin:
+        container_name: ierg4210_phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 8000:80
+        restart: always
+        environment:
+            PMA_HOST: db
+        depends_on:
+            - db
+    webserver:
+        image: nginx:latest
+        ports:
+          - 80:80
+          - 443:443
+        restart: always
+        depends_on:
+          - web
+        volumes:
+          - ./nginx/conf/:/etc/nginx/conf.d/:ro
+          - ./certbot/www:/var/www/certbot/:ro
+          - ./certbot/conf/:/etc/nginx/ssl/:ro
+    certbot:
+        image: certbot/certbot:latest
+        depends_on:
+          - webserver
+        volumes:
+          - ./certbot/www/:/var/www/certbot/:rw
+          - ./certbot/conf/:/etc/letsencrypt/:rw

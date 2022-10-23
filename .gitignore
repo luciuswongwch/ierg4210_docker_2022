@@ -1,0 +1,6 @@
+srv/www/ierg4210/.env
+srv/www/ierg4210/code/includes/db_config.php
+srv/www/ierg4210/code/images/products/*
+srv/www/ierg4210/apache_log/*
+srv/www/ierg4210/certbot/conf/*
+srv/www/ierg4210/certbot/www/*
